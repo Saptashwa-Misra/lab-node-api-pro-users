@@ -14,7 +14,11 @@ app.get('/api/users',async function(req,res){
 
     try{
         const result = await userSchema.find()
-        res.send(result)
+        //console.log(result.length==0)
+        if (result.length==0)
+            res.status(500).json({ errorMessage: "The are no users in the database." })
+        else
+            res.send(result)
     }
     catch(err){
         console.log(err)
@@ -25,7 +29,7 @@ app.post('/api/users',async function(req,res){
 
     try{
         const result = await userSchema.create(req.body)
-        res.send('Data Inserted')
+        res.status(201).send('Data Inserted')
     }
     catch(err){
         console.log(err)
@@ -37,7 +41,11 @@ app.get('/api/users/:id',async function(req,res){
     try{
         const ID = parseInt(req.params.id)
         const result = await userSchema.findOne({prograd_id:ID})
-        res.send(result)
+        if(result==null)
+            res.status(404).json({ message: "The user with the specified ID does not exist." })
+        //console.log(result)
+        else
+            res.send(result)
     }
     catch(err){
         console.log(err)
@@ -58,8 +66,8 @@ app.put('/api/users/:id', async function(req,res){
             })
         }
         else{
-            res.json({
-                message: 'Record not found',
+            res.status(404).json({
+                message: 'The user with the specified ID does not exist.',
             })
         }
     }
@@ -83,8 +91,8 @@ app.delete('/api/users/:id', async function(req,res){
             })
         }
         else{
-            res.json({
-                message: 'Record not found',
+            res.status(404).json({
+                message: 'The user with the specified ID does not exist.',
             })
         }
     }
